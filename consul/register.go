@@ -18,8 +18,7 @@ func RegisterServiceWithConsul(dto *dto.ServiceRegisterDTO) {
 	}
 
 	registration := new(api.AgentServiceRegistration)
-	registration.ID = dto.Name
-	
+	registration.ID = dto.ID
 	registration.Name = dto.Name
 	address := service.Hostname()
 	registration.Address = address
