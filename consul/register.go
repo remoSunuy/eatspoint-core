@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/consul/api"
 	"github.com/remoSunuy/eatspoint-core/dto"
+	"github.com/remoSunuy/eatspoint-core/service"
 )
 
 func RegisterServiceWithConsul(dto *dto.ServiceRegisterDTO) {
@@ -19,7 +20,7 @@ func RegisterServiceWithConsul(dto *dto.ServiceRegisterDTO) {
 	registration := new(api.AgentServiceRegistration)
 	registration.ID = dto.Name
 	registration.Name = dto.Name
-	address := dto.IP
+	address := service.Hostname()
 	registration.Address = address
 	registration.Port = dto.Port
 	registration.Check = new(api.AgentServiceCheck)
