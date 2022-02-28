@@ -36,11 +36,14 @@ func LookupServiceWithConsul(serviceName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	services, err := consul.Agent().Services()
+	services, err := consul.Agent().ServicesWithFilterOpts(serviceName, &api.QueryOptions{
+		AllowStale: true,
+	})
+
 	if err != nil {
 		return "", err
 	}
-	srvc := services["product-service"]
+	srvc := services[serviceName]
 	address := srvc.Address
 	port := srvc.Port
 	return fmt.Sprintf("http://%s:%v", address, port), nil
