@@ -36,7 +36,7 @@ func LookupServiceWithConsul(serviceName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	services, err := consul.Agent().ServicesWithFilterOpts(serviceName, &api.QueryOptions{
+	services, err := consul.Agent().ServicesWithFilterOpts("", &api.QueryOptions{
 		AllowStale: true,
 	})
 
