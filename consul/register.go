@@ -3,6 +3,7 @@ package consul
 import (
 	"fmt"
 	"log"
+	"math/rand"
 
 	"github.com/hashicorp/consul/api"
 	"github.com/remoSunuy/eatspoint-core/dto"
@@ -51,19 +52,23 @@ func LookupServiceWithConsul(serviceName string) (string, error) {
 	return fmt.Sprintf("http://%s:%v", address, port), nil
 }
 
-func HealthConsulService(service, tag string) ([]*api.ServiceEntry, *api.QueryMeta, error) {
+func HealthConsulService(service, tag string) (string, error) {
 	passingOnly := true
 	config := api.DefaultConfig()
 	consul, err := api.NewClient(config)
 	if err != nil {
-		return nil, nil, err
+		return "", err
 	}
-	addrs, meta, err := consul.Health().Service(service, tag, passingOnly, nil)
+	addrs, _, err := consul.Health().Service(service, tag, passingOnly, nil)
 	if len(addrs) == 0 && err == nil {
-		return nil, nil,fmt.Errorf("service ( %s ) was not found", service)
+		return "",fmt.Errorf("service ( %s ) was not found", service)
 	}
 	if err != nil {
-		return nil,nil,  err
+		return "",  err
 	}
-	return addrs, meta, nil
+
+	randomIndex := rand.Intn(len(addrs))
+	serviceEntry := addrs[randomIndex]
+
+	return fmt.Sprintf("http://%s:%v", serviceEntry.Service.Address, serviceEntry.Service.Port), nil
 }
